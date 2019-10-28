@@ -1,0 +1,14 @@
+if debug != 0 || log_visibility != 0 then
+  getdate _error_message '[%Y-%m-%d %H:%M:%S] '
+  strconcat _error_message message
+
+  foldersearch 'log'
+  if result = 0 then
+    foldercreate 'log'
+  endif
+
+  fileopen fhandle 'log\error.log' 1
+  filewriteln fhandle _error_message
+  fileclose fhandle
+  log_visibility = 0
+endif

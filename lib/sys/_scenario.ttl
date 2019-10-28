@@ -1,0 +1,61 @@
+ifdefined scenario
+if result != 3 then
+  sprintf2 message 'Undefined argument: scenario'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+strlen scenario
+if result == 0 then
+  sprintf2 message 'Unset argument: scenario'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+ifdefined type
+if result = 3 then
+  sprintf 'scenario\%s\%s.ini' type scenario
+  call _include_scenario
+endif
+
+sprintf 'scenario\%s.ini' scenario
+call _include_scenario
+
+sprintf2 message '(Scenario) Not found scenario: %s' scenario
+include 'lib\sys\log.ttl'
+result = 0
+exit
+
+:_include_scenario
+filename = inputstr
+filesearch filename
+if result = 1 then
+  visibility = debug
+  sprintf2 message '===== Load scenario: %s =====' scenario
+  include 'lib\sys\log.ttl'
+
+  include 'lib\ini\load.ttl'
+
+  sprintf '_scenario_size = ini_section_%s' refname
+  execcmnd inputstr
+  sprintf2 _scenario_cmnd 'section = ini_sections_%s[_scenario_i]' refname
+  for _scenario_i 0 _scenario_size
+    api_continue = 1
+    execcmnd _scenario_cmnd
+    include 'lib\ini\export-section.ttl'
+
+    include 'lib\sys\_api.ttl'
+    if result = 0 then
+      sprintf2 message '(Scenario) API terminate on error: %s' API
+      include 'lib\sys\log.ttl'
+    endif
+
+    if api_continue = 0 then
+      break
+    endif
+  next
+  exit
+endif
+return

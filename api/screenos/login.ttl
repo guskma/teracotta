@@ -1,0 +1,25 @@
+wait 'login:' 'password:'
+if result = 1 then
+  sendln loginuser
+  wait 'password:'
+elseif result = 0 then
+  message = '(ScreenOS) login failed: It may not be the login phase'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+sendln password
+
+wait '->'
+if result = 0 then
+  messagebox '(ScreenOS) login failed: invalid password'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+sendln ''
+
+prompt = '-> '
+prompt_re = '.+-> '
+result = 1

@@ -1,0 +1,9 @@
+sendln 'enable'
+
+wait 'Password:' '#'
+if result = 1 then
+  sendln become
+endif
+
+include 'lib\term\prompt.ttl'
+result = 1

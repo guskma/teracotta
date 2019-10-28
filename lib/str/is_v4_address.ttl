@@ -1,0 +1,19 @@
+; is_v4_address.ttl
+; 文字列がIPv4かどうかを判定します。
+; 調査する文字列は前後の空白のみ許容します。
+
+; [入力値]
+; message: 調査対象の文字列です。
+
+; [戻り値]
+; result: 一致しなかったら 0、1 以上で一致した文字列位置
+; groupmatchstr1: 一致したIPv4アドレス(プレフィックスあり)(前後空白なし)
+; groupmatchstr2: 一致したIPv4アドレス(プレフィックスなし)(前後空白なし)
+; groupmatchstr3-6: 各オクテット数値
+; groupmatchstr7: プレフィックス
+
+_re_octet = '[1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]'
+_re_prefix = '[1-2]?[0-9]|3[0-2]'
+
+sprintf '^\s*(((%s)\.(%s)\.(%s)\.(%s))(?:\/(%s))?)\s*$' _re_octet _re_octet _re_octet _re_octet _re_prefix
+strmatch message inputstr

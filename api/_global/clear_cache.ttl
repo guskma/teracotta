@@ -1,0 +1,7 @@
+; clear_cache.ttl
+; ターミナル制御でありがちなプロンプトずれ現象を解消します。
+; プロンプト + スペースx10 を待ち受けることにより最後のプロンプトを認識させます。
+
+sprintf '%s          ' prompt
+sendln '          '
+waitln inputstr

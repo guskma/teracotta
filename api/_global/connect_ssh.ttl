@@ -1,0 +1,80 @@
+; connect_ssh.ttl
+; SSH接続を試行します。
+
+; [入力値]
+; (string)port: TCPポート番号(1-) default:22
+; (integer)ssh_ver: SSHバージョン(1|2) default:2
+; (string)auth: 認証方法(password/publickey/challenge/pageant) default:password
+; (string)dest: 接続先(IPまたはホスト名)
+; (string)username: ユーザ名
+; (string)password: パスワード
+; (string)keyfile: 秘密鍵(保存パス)
+
+; [戻り値]
+; (integer)result: 接続成否(0で接続失敗)
+
+ifdefined port
+if result = 0 then
+  _port = 22
+elseif result = 3 then
+  str2int _port port
+elseif result != 1 then
+  result = 0
+  exit
+endif
+
+if _port <= 0 then
+  _port = 22
+endif
+
+ifdefined ssh_ver
+if result = 0 then
+  ssh_ver = 2
+elseif result != 1 then
+  result = 0
+  exit
+endif
+
+ifdefined auth
+if result = 0 then
+  auth = 'password'
+elseif result != 3 then
+  result = 0
+  exit
+endif
+
+ifdefined dest
+if result = 0 || result != 3 then
+  result = 0
+  exit
+endif
+
+sprintf '%s:%d /ssh /%d /auth=%s' dest _port ssh_ver auth
+
+ifdefined username
+if result = 3 then
+  strconcat inputstr ' /user='
+  strconcat inputstr username
+endif
+
+ifdefined password
+if result = 3 then
+  strconcat inputstr ' /passwd='
+  strconcat inputstr password
+endif
+
+ifdefined keyfile
+if result = 3 then
+  strconcat inputstr ' /keyfile='
+  strconcat inputstr keyfile
+endif
+
+connect inputstr
+
+if result < 2 then
+  message = '(Connect) ssh connection is not established.'
+  include 'lib\sys\log.ttl'
+  result = 0
+else
+  result = 1
+endif

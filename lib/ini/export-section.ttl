@@ -1,0 +1,33 @@
+strlen refname
+if result = 0 then
+  refname = 'ini'
+endif
+
+strlen section
+if result == 0 then
+  sprintf2 message 'undefined argument: section'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+sprintf '_s_size = ini_section_%s' refname
+execcmnd inputstr
+
+for i 0 _s_size
+  sprintf 'strcompare section ini_sections_%s[i]' refname
+  execcmnd inputstr
+  if result = 0 break
+next
+
+sprintf '_s_cmnd = ini_parameters_%s_%s[i]' refname section
+
+for i 0 1000
+  execcmnd inputstr
+  strlen _s_cmnd
+  if result = 0 break
+  execcmnd _s_cmnd
+next
+
+result = 1
+exit

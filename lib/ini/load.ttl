@@ -1,0 +1,104 @@
+; load ini library
+_s_size = 0
+
+; initialization
+filesearch filename
+if result == 0 then
+  sprintf2 message 'Not found ini file: %s' filename
+  include 'lib\sys\log.ttl'
+  exit
+endif
+
+strlen refname
+if result = 0 then
+  refname = 'ini'
+endif
+
+; load ini file
+fileopen fhandle filename 0
+if fhandle < 0 then
+  sprintf2 message '%s can not open' filename
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+sprintf 'ifdefined ini_sections_%s 100' refname
+execcmnd inputstr
+if result = 0 then
+  sprintf 'strdim ini_sections_%s 100' refname
+  execcmnd inputstr
+elseif result != 6 then
+  sprintf2 message 'ini_sections_%s is not strarr: %d' refname result
+  include 'lib\sys\log.ttl'
+  fileclose fhandle
+  result = 0
+  exit
+endif
+
+sprintf 'ifdefined ini_sections_%s 100' refname
+execcmnd inputstr
+sprintf 'defined: %d' result
+
+; read ini sections
+while 1
+  filereadln fhandle _line
+  if result == 1 then
+    break
+  endif
+
+  strtrim _line " "
+
+  strlen _line
+  if result == 0 continue
+
+  strmatch _line "^(?:([;#]).*|(\[)([^\]]+)\]|(\S+\s*(=)\s*.+))$"
+  if result != 1 continue
+
+  strlen groupmatchstr1 ; line type: comment
+  _result = result
+  strlen groupmatchstr2 ; line type: section
+  _result = result + (_result << 1)
+  strlen groupmatchstr5 ; line type parameter
+  _result = result + (_result << 1)
+
+  if _result & $4 then ; line type: comment
+    continue
+  elseif _result & $2 then ; line type section
+    sprintf 'ini_sections_%s[_s_size] = groupmatchstr3' refname
+    execcmnd inputstr
+    sprintf 'ifdefined ini_parameters_%s_%s' refname groupmatchstr3
+    execcmnd inputstr
+    if result = 0 then
+      sprintf 'strdim ini_parameters_%s_%s 1000' refname groupmatchstr3
+      execcmnd inputstr
+    endif
+    sprintf 'ini_section_%s = _s_size' refname
+    execcmnd inputstr
+    _s_name = groupmatchstr3
+    _s_size = _s_size + 1
+    _p_size = 0
+  elseif _result & $1 then ; line type parameter
+    strlen _s_name
+    if result = 0 then
+      fileclose fhandle
+      message = 'ini sections do not set yet'
+      include 'lib\sys\log.ttl'
+      result = 0
+      exit
+    endif
+    sprintf 'ini_parameters_%s_%s[_p_size] = groupmatchstr4' refname _s_name
+    execcmnd inputstr
+    _p_size = _p_size + 1
+  endif
+endwhile
+
+; exit loading ini
+fileclose fhandle
+if _p_size > 0 then
+  sprintf 'ini_parameters_%s_%s[_p_size] = ""' refname _s_name
+  execcmnd inputstr
+endif
+
+result = 1
+exit

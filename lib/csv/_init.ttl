@@ -1,0 +1,24 @@
+_csv_column = 0
+
+ifdefined csv_max_column
+if result == 0 then
+  csv_max_column = 99
+elseif result != 1 then
+  message = 'csv_max_column is not defined as an integer variable.'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+ifdefined csv_max_rows
+if result == 0 then
+  csv_max_rows = 1000
+elseif result != 1 then
+  message = 'csv_max_rows is not defined as an integer variable.'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+strdim _csv_line_fields csv_max_column+1
+strdim _csv_execcmnds csv_max_column+1

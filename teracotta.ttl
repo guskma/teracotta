@@ -1,0 +1,39 @@
+include 'lib\sys\_init.ttl'
+
+debug = 1
+
+sprintf2 message "//////// Teracotta v%s - API %s ////////" teracotta_ver api_ver
+include 'lib\sys\log.ttl'
+
+strlen param2
+if result != 0 then
+  filename = param2
+else
+  filename = 'hosts.csv'
+endif
+
+refname = 'inventory'
+is_header = 1
+include 'lib\csv\load.ttl'
+
+strlen param3
+if result != 0 then
+  scenario = param3
+endif
+
+for inventory_row 0 csv_row_inventory
+  row = inventory_row
+  include 'lib\csv\export-row.ttl'
+
+  sprintf2 message '* Loaded host parameters: %s *' sysname
+  include 'lib\sys\log.ttl'
+
+  include 'lib\sys\_scenario.ttl'
+  if result = 0 then
+    sprintf 'API NG: %s' API
+    messagebox inputstr 'Error'
+  endif
+next
+
+closett
+exit

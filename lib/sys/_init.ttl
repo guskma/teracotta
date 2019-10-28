@@ -1,0 +1,58 @@
+; initialize tool'
+_init_ver = '4.78'
+teracotta_ver = '1.0.0'
+api_ver = '0.1.0'
+
+; initialize system arguments
+type = ''
+API = ''
+refname = ''
+filename = ''
+message = ''
+scenario = 'scenario'
+log_visibility = 0
+debug = 0
+
+_key = ''
+_line = ''
+_i_value = 0
+_s_value = ''
+
+strdim _execcmnds 100
+
+; check version
+
+getver inputstr _init_ver
+if result < 0 then
+  sprintf 'Support version error(>%s): %s' _init_ver inputstr
+  messagebox inputstr 'Error: init'
+  end
+endif
+
+filename = 'config.ini'
+filesearch filename
+if result == 1 then
+  message = 'Load config.ini'
+  include 'lib\sys\log.ttl'
+  refname = 'config'
+  include 'lib\ini\load.ttl'
+  for i 0 100
+    section = 'global'
+    strlen ini_sections_config[i]
+    if result == 0 then
+      break
+    endif
+    strcompare ini_sections_config[i] section
+    if result == 0 then
+      include 'lib\ini\export-section.ttl'
+      break
+    endif
+  next
+  ifdefined config_sections_size
+endif
+
+;regexoption 'OPTION_SINGLELINE'
+
+; initialize libraries
+include 'lib\csv\_init.ttl'
+include 'lib\ini\_init.ttl'

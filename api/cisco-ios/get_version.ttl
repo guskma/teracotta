@@ -1,0 +1,10 @@
+command = 'show version'
+sendln ''
+sendln command
+sprintf '%s.*%s' prompt_re command
+waitregex inputstr
+do
+  wait prompt
+  if result = 1 break
+loop while 1
+sendln ''

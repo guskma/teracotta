@@ -1,0 +1,7 @@
+; disp_str.ttl
+; 文字を端末画面に出力します
+
+; [入力値]
+; (string)message: 出力メッセージ
+
+dispstr message

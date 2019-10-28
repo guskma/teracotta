@@ -1,0 +1,30 @@
+; raw_command.ttl
+; シンプルにコマンドを実行し、プロンプトが戻ってくるのを待ちます。
+
+; [入力値]
+; (string)command: コマンド名
+; (string)prompt: 待ち受けるプロンプト(平文)
+; (string)prompt_re: 待ち受けるプロンプト(正規表現)
+;   ※prompt, prompt_reは lib\term\prompt.ttl を呼び出すことで設定することが出来ます。
+
+; コマンドを実行し、コマンド実行した行までバッファを流す
+sendln ''
+sendln command
+sprintf '%s.*%s' prompt_re command
+waitregex inputstr
+
+; コマンド出力後のプロンプトが出てくるのを待つ
+wait prompt
+
+; コマンド実行中に出力したメッセージから特定の行などを抽出したい場合は以下のように書きます。
+; 例：エラー判定する処理
+;do
+;  wait prompt 'error'
+;  if result <= 1 then
+;    break
+;  elseif result == 2 then
+;    messagebox 'これはエラーです' 'Error!'
+;  endif
+;loop while 1
+
+sendln ''

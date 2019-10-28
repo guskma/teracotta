@@ -1,0 +1,41 @@
+; connect_telnet.ttl
+; Telnet接続を試行します。
+
+; [入力値]
+; (string)port: TCPポート番号(1-) default:23
+; (string)dest: 接続先(IPまたはホスト名)
+
+; [戻り値]
+; (integer)result: 接続成否(0で接続失敗)
+
+ifdefined port
+if result = 0 then
+  _port = 23
+elseif result == 3 then
+  str2int _port port
+else
+  sprintf2 message 'Invalid argument: port'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+ifdefined dest
+if result = 0 || result != 3 then
+  message = '(connect) undefined destination address'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+sprintf '%s:%d /nossh /T=1' dest _port
+
+connect inputstr
+
+if result < 2 then
+  message = '(Connect) telnet connection is not established.'
+  include 'lib\sys\log.ttl'
+  result = 0
+else
+  result = 1
+endif

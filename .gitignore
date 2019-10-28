@@ -1,0 +1,11 @@
+user-api/*
+scenario/*
+log/
+tmp*
+*\.csv
+*\.ini
+*\.swp
+!hosts-example.csv
+!config-example.ini
+!user-api/README.md
+!scenario/example.ini

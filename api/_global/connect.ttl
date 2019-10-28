@@ -1,0 +1,35 @@
+; connect.ttl
+; 機器にtelnet/ssh/consoleのいずれかの方法で接続する際に呼び出す。
+; protocol変数値を見て `connect-[protocol].ttl` に振り分けます。
+
+; [入力値]
+; (string)protocol: 接続種別(console/telnet/ssh)
+; その他接続種別に依存した入力値は console-*.ttl を参照してください。
+
+; [戻り値]
+; (integer)result: 試行結果(0で失敗、1以上で成功)
+; 成功時の具体的な数値については console-*.ttl を参照してください。
+
+ifdefined protocol
+if result == 0 then
+  protocol = 'console'
+elseif result != 3 then
+  result = 0
+  exit
+endif
+
+strmatch protocol 'console|telnet|ssh'
+if result == 0 then
+  message = '(Connect) Invalid connection protocol.'
+  exit
+endif
+
+sprintf 'api\_global\connect_%s.ttl' protocol
+include inputstr
+if result = 0 then
+  exit
+endif
+
+timeout = 0
+mtimeout = 0
+setsync 1

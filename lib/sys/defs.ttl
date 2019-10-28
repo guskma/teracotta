@@ -1,0 +1,27 @@
+_result = result
+
+sprintf 'ifdefined %s' s_key
+execcmnd inputstr
+
+if _result == 1 then
+  if result == 0 then
+    sprintf '%s = %d' s_key i_value
+    execcmnd inputstr
+  elseif result != 1 then
+    sprintf2 message '%s is not defined as an integer variable.'
+    result = 0
+    exit
+  endif
+elseif _result = 3 then
+  if result == 0 then
+    sprintf '%s = "%s"' s_key s_value
+    execcmnd inputstr
+  elseif result != 3 then
+    sprintf2 message '%s is not defined as an string variable.'
+    result = 0
+    exit
+  endif
+endif
+
+sprintf 'ifdefined %s' s_key
+execcmnd inputstr

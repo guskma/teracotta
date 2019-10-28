@@ -1,0 +1,40 @@
+; connect_console.ttl
+; シリアル接続を試行します。
+; 指定されていない場合はteraterm仕様の0～255を順に試行します。
+; 未接続 or 他のソフトで使用中のポートには接続できません。
+
+; [入力値]
+; (string)port: COMポート番号(0-256)
+
+; [戻り値]
+; (integer)result: 接続ポート(0で接続失敗)
+
+_connected_port = 0
+str2int _port port
+
+if _port > 0 then
+  call _connect
+else
+  for _port 0 256
+    call _connect
+    if _connected_port > 0 break
+  next
+endif
+
+result = _connected_port
+
+if result = 0 then
+  message = '(Connect) console connection is not established.'
+  include 'lib\sys\log.ttl'
+endif
+
+exit
+
+:_connect
+sprintf '/C=%d' _port
+connect inputstr
+if result = 2 then
+  _connected_port = _port
+  sendln ''
+endif
+return

@@ -1,0 +1,100 @@
+; logopen.ttl
+; ログ取得を開始します。
+; ログ取得には設定ファイル config.ini で設定された値を読み込みます。
+; config.ini の [log] セクションのパラメータを調整してください。
+
+; [Config値]
+; (integer)is_binary: バイナリ出力
+;   0: しない(漢字、改行コードなどは変換される)
+;   1: する(漢字、改行コードなどはそのまま書き込まれる)
+; (integer)is_append: 追記モード
+;   0: 無効(ログ取得時、既存のテキストを消去する)
+;   1: 有効(ログ取得時、既存のテキストに追記する)
+; (integer)is_plain: プレーン出力
+;   0: 無効(NULLなどASCII非表示文字を出力する)
+;   1: 有効(ASCII非表示文字を出力しない)
+; (integer)is_timestamp: タイムスタンプ出力
+;   0: 無効(行頭にタイムスタンプを出力しない)
+;   1: 有効(行頭にタイムスタンプを出力する)
+; (integer)is_hide: ログ転送ダイアログの非表示
+;   0: 表示
+;   1: 非表示
+; (integer)is_buffer: スクリーンバッファを先に書き込む
+;   0: 無効
+;   1: 有効
+;   ※teraterm v4.80 以降でのみ有効になります。
+; (integer)is_logrotate: ログローテート設定の有効化
+;   0: 無効
+;   1: 有効
+; (string)logrotate_size: ローテートサイズ(128-)
+;   例: 1048576, 1024K, 1M
+; (integer)logrotate_count: ローテート世代数(3-)
+;   指定した世代数だけファイルを保持し、古いファイルは順番に削除されます。
+
+; [入力値]
+; (string)logfilename: ログファイル名
+
+; [戻り値]
+; (integer)result: 接続ポート(0で接続失敗)
+
+
+ifdefined logfilename
+if result != 3 then
+  message = '(Log) log filename is undefined'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+strlen logfilename
+if result == 0 then
+  message = '(Log) log filename is unset'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+_refname = refname
+_section = section
+
+refname = 'config'
+section = 'log'
+
+include 'lib\ini\export-section.ttl'
+
+refname = _refname
+section = _section
+
+getdir inputstr
+sprintf '%s\%s' inputstr logfilename
+
+getver _s_value '4.80'
+if result >= 0 then
+  logopen inputstr is_binary is_append is_plain is_timestamp is_hide is_buffer
+else
+  logopen inputstr is_binary is_append is_plain is_timestamp is_hide
+endif
+
+if result == 1 then
+  sprintf2 message '(Log) could not open: %s' logfilename
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+sprintf2 message '(Log) start to get log: %s' inputstr
+include 'lib\sys\log.ttl'
+
+ifdefined is_logrotate
+if result == 1 && is_logrotate == 1 then
+  ifdefined logrotate_size
+  if result == 3 then
+    logrotate 'size' logrotate_size
+  endif
+  ifdefined logrotate_rotate
+  if result == 1 then
+    logrotate 'rotate' logrotate_rotate
+  endif
+endif
+
+result = 1

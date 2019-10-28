@@ -1,0 +1,6 @@
+command = 'end'
+sendln ''
+sendln command
+sprintf '%s.*%s' prompt_re command
+waitregex inputstr
+include 'lib\term\prompt.ttl'

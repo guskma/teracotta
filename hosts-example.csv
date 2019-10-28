@@ -1,0 +1,2 @@
+sysname,dest,port,protocol,type,scenario,loginuser,password,become,logfilename
+test1,,,console,cisco-ios,scenario,cisco,cisco,cisco,log\test_console.log

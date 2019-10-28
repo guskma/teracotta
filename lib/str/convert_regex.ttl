@@ -1,0 +1,16 @@
+_msg = message
+message = ''
+i = 1
+do
+  strmatch _msg '[()\[\].+*$^|\\]'
+  if result > 0 then
+    strcopy _msg 1 result inputstr
+    strconcat message inputstr
+    strremove _msg 1 result
+    strlen message
+    strinsert message result '\'
+  else
+    strconcat message _msg
+    break
+  endif
+loop while 1

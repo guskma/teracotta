@@ -1,0 +1,11 @@
+strmatch prompt '\(config.*\)#$'
+if result > 0 then
+  sendln 'end'
+  include 'lib\term\prompt.ttl'
+endif
+
+sendln ''
+waitln prompt
+sendln 'exit'
+
+disconnect 0

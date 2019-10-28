@@ -1,0 +1,30 @@
+strlen refname
+if result = 0 then
+  refname = 'csv'
+endif
+
+sprintf '_csv_column = csv_column_%s' refname
+execcmnd inputstr
+sprintf '_csv_row = csv_row_%s' refname
+execcmnd inputstr
+if _csv_column = 0 || _csv_row < 0 then
+  sprintf2 message 'Invalid csv data(%s): column size:%d row size:%d' refname _csv_column _csv_row
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+if _csv_row < row || row < 0 then
+  sprintf2 message 'csv index out of range(row: %d)' row
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+sprintf2 _execcmnds[0] '_key = csv_headers_%s[i]' refname
+for i 0 _csv_column
+  execcmnd _execcmnds[0]
+  sprintf '%s = csv_rows_%s_%d[row]' _key refname i
+  execcmnd inputstr
+next
+result = 1

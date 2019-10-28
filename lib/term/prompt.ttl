@@ -1,0 +1,14 @@
+sendln ''
+sendln ''
+waitln '>' '#' '$' '%'
+
+if result > 0 then
+  prompt = inputstr
+  message = prompt
+  include 'lib\str\convert_regex.ttl'
+  prompt_re = message
+else
+  message = '(Prompt) could not catch any prompt.'
+  include 'lib\sys\log.ttl'
+endif
+

@@ -1,0 +1,4 @@
+; logclose.ttl
+; ログ取得を終了します
+
+logclose

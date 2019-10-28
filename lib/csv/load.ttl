@@ -1,0 +1,111 @@
+; load csv library
+
+; initialization
+filesearch filename
+if result = 0 then
+  sprintf2 message 'Not found csv file: %s' filename
+  include 'lib\sys\log.ttl'
+  exit
+endif
+
+strlen refname
+if result = 0 then
+  refname = 'csv'
+endif
+
+; load csv file
+fileopen fhandle filename 0
+if fhandle < 0 then
+  sprintf2 message '%s can not open.' filename
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+; read csv header
+sprintf 'ifdefined csv_headers_%s' refname
+execcmnd inputstr
+if result = 0 then
+  sprintf 'strdim csv_headers_%s csv_max_column+1' refname
+  execcmnd inputstr
+elseif result != 6 then
+  sprintf2 message 'csv_headers_%s is not defined as a string array variable.' refname
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+filereadln fhandle _line
+if result = 1 then
+  message = 'csv file is empty.'
+  include 'lib\sys\log.ttl'
+  result = 0
+  call _error
+endif
+
+strlen _line
+if result = 0 then
+  message = 'csv header row is undefined'
+  include 'lib\sys\log.ttl'
+  result = 0
+  call _error
+endif
+
+call _csv_readline
+if _len > csv_max_column then
+  message = 'the number of csv headers exceeds the set value.'
+  include 'lib\sys\log.ttl'
+  result = 0
+  call _error
+endif
+
+for i 0 _len
+  sprintf 'csv_headers_%s[i] = _csv_line_fields[i]' refname
+  execcmnd inputstr
+  sprintf 'strdim csv_rows_%s_%d %d' refname i csv_max_rows
+  execcmnd inputstr
+  sprintf2 _csv_execcmnds[i] 'csv_rows_%s_%d[csv_row_%s] = _csv_line_fields[i]' refname i refname
+next
+
+; read csv rows
+_csv_column = _len
+sprintf 'csv_column_%s = _len' refname
+execcmnd inputstr
+
+sprintf 'csv_row_%s = -1' refname
+execcmnd inputstr
+sprintf 'csv_row_%s = csv_row_%s + 1' refname refname
+_execcmnds[0] = inputstr
+
+while 1
+  filereadln fhandle _line
+  if result = 1 break
+  call _csv_readline
+  execcmnd _execcmnds[0]
+  for i 0 _csv_column
+    execcmnd _csv_execcmnds[i]
+  next
+loop
+
+; exit loading csv
+fileclose fhandle
+exit
+
+:_csv_readline
+_len = 0
+for i 0 csv_max_column
+  strscan _line ','
+  if result > 0 then
+    strcopy _line 1 result-1 _csv_line_fields[i]
+    strremove _line 1 result
+  else
+    _csv_line_fields[i] = _line
+    if _len = 0 _len = i
+  endif
+next
+return
+
+:_error
+result = 0
+fileclose fhandle
+exit

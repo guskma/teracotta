@@ -1,0 +1,14 @@
+command = 'configure terminal'
+sendln ''
+sendln command
+sprintf '%s.*%s' prompt_re command
+waitregex inputstr
+prompt = '(config'
+message = prompt
+include 'lib\str\convert_regex.ttl'
+prompt_re = message
+do
+  wait prompt
+  if result = 1 break
+loop while 1
+sendln ''
