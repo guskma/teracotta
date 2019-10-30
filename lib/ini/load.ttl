@@ -1,10 +1,12 @@
 ; load ini library
 _s_size = 0
+_filename = filename
+filename = ''
 
 ; initialization
-filesearch filename
+filesearch _filename
 if result == 0 then
-  sprintf2 message 'Not found ini file: %s' filename
+  sprintf2 message 'Not found ini file: %s' _filename
   include 'lib\sys\log.ttl'
   exit
 endif
@@ -15,9 +17,9 @@ if result = 0 then
 endif
 
 ; load ini file
-fileopen fhandle filename 0
+fileopen fhandle _filename 0
 if fhandle < 0 then
-  sprintf2 message '%s can not open' filename
+  sprintf2 message '%s can not open' _filename
   include 'lib\sys\log.ttl'
   result = 0
   exit

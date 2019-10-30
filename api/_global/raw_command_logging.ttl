@@ -1,0 +1,49 @@
+; raw_command_logging.ttl
+; シンプルにコマンドを実行し、プロンプトが戻ってくるのを待ちます。
+; 打ったコマンド結果は log\command フォルダ内に保存されます。
+
+; [入力値]
+; (string)command: コマンド名
+; (string)prompt: 待ち受けるプロンプト(平文)
+; (string)prompt_re: 待ち受けるプロンプト(正規表現)
+;   ※prompt, prompt_reは lib\term\prompt.ttl を呼び出すことで設定することが出来ます。
+; (string)filename: 出力ファイル名(デフォルトは[sysname]_[command]_[現在時刻].txt)
+
+message = ''
+_filename = filename
+filename = ''
+
+foldersearch 'log'
+if result = 0 then
+  foldercreate 'log'
+endif
+foldersearch 'log\command'
+if result = 0 then
+  foldercreate 'log\command'
+endif
+
+strlen _filename
+if result == 0 then
+  getdate _s_value '%Y%m%d%H%M%S'
+  sprintf2 _filename 'log\command\%s_%s_%s.txt' sysname command _s_value
+endif
+
+fileopen _fhandle _filename 0
+
+sendln ''
+sendln command
+sprintf '%s.*%s' prompt_re command
+waitregex inputstr
+
+do
+  wait prompt #13
+  if result = 1 then
+    break
+  elseif result = 2 then
+    recvln
+    filewriteln _fhandle inputstr
+  endif
+loop while 1
+sendln ''
+
+fileclose _fhandle
