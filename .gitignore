@@ -8,4 +8,4 @@ tmp*
 !hosts-example.csv
 !config-example.ini
 !user-api/README.md
-!scenario/example.ini
+!scenario/scenario-example.ini
