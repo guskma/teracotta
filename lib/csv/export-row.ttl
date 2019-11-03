@@ -21,10 +21,10 @@ if _csv_row < row || row < 0 then
   exit
 endif
 
-sprintf2 _execcmnds[0] '_key = csv_headers_%s[i]' refname
-for i 0 _csv_column
+sprintf2 _execcmnds[0] '_key = csv_headers_%s[_i]' refname
+for _i 0 _csv_column
   execcmnd _execcmnds[0]
-  sprintf '%s = csv_rows_%s_%d[row]' _key refname i
+  sprintf '%s = csv_rows_%s_%d[row]' _key refname _i
   execcmnd inputstr
 next
 result = 1

@@ -23,7 +23,7 @@ message = '|'
 _separator = '|'
 sprintf2 _execcmnds[0] '_key = csv_headers_%s[i]' refname
 
-for i 0 _csv_column
+for _i 0 _csv_column
   strconcat _separator '----|'
   execcmnd _execcmnds[0]
   sprintf2 message '%s %s |' message _key
@@ -33,10 +33,10 @@ message = _separator
 include 'lib\sys\log.ttl'
 
 if _csv_row >= 0 then
-  for i 0 _csv_row
+  for _i 0 _csv_row
     message = '|'
-    for j 0 _csv_column
-      sprintf '_s_value = csv_rows_%s_%d[i]' refname j
+    for _j 0 _csv_column
+      sprintf '_s_value = csv_rows_%s_%d[_i]' refname _j
       execcmnd inputstr
       sprintf2 message '%s %s |' message _s_value
     next

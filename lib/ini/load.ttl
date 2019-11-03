@@ -2,6 +2,7 @@
 _s_size = 0
 _filename = filename
 filename = ''
+_i = 0
 
 ; initialization
 filesearch _filename
@@ -44,6 +45,7 @@ sprintf 'defined: %d' result
 
 ; read ini sections
 while 1
+  _i = _i + 1
   filereadln fhandle _line
   if result == 1 then
     break

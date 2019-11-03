@@ -51,6 +51,23 @@ if result == 1 then
   ifdefined config_sections_size
 endif
 
+message = 'Load config.ini'
+include 'lib\sys\log.ttl'
+
+for i 0 100
+  section = 'global'
+  strlen ini_sections_config[i]
+  if result == 0 then
+    break
+  endif
+  strcompare ini_sections_config[i] section
+  if result == 0 then
+    include 'lib\ini\export-section.ttl'
+    break
+  endif
+next
+ifdefined config_sections_size
+
 ;regexoption 'OPTION_SINGLELINE'
 
 ; initialize libraries
