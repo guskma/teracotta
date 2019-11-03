@@ -6,7 +6,7 @@
 ; (integer)ssh_ver: SSHバージョン(1|2) default:2
 ; (string)auth: 認証方法(password/publickey/challenge/pageant) default:password
 ; (string)dest: 接続先(IPまたはホスト名)
-; (string)username: ユーザ名
+; (string)loginuser: ユーザ名
 ; (string)password: パスワード
 ; (string)keyfile: 秘密鍵(保存パス)
 
@@ -51,10 +51,10 @@ endif
 
 sprintf '%s:%d /ssh /%d /auth=%s' dest _port ssh_ver auth
 
-ifdefined username
+ifdefined loginuser
 if result = 3 then
   strconcat inputstr ' /user='
-  strconcat inputstr username
+  strconcat inputstr loginuser
 endif
 
 ifdefined password
@@ -76,5 +76,6 @@ if result < 2 then
   include 'lib\sys\log.ttl'
   result = 0
 else
+  include 'lib\term\prompt.ttl'
   result = 1
 endif

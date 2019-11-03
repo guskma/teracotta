@@ -4,7 +4,7 @@ sendln command
 sprintf '%s.*%s' prompt_re command
 waitregex inputstr
 do
-  wait prompt '% '
+  wait prompt #13'% '
   if result = 1 then
     break
   elseif result = 2 then

@@ -3,6 +3,10 @@ _init_ver = '4.78'
 teracotta_ver = '1.0.1'
 api_ver = '0.1.1'
 
+; initialize libraries
+include 'lib\csv\_init.ttl'
+include 'lib\ini\_init.ttl'
+
 ; initialize system arguments
 type = ''
 API = ''
@@ -12,6 +16,8 @@ message = ''
 scenario = 'scenario'
 log_visibility = 0
 debug = 0
+prompt = ''
+prompt_re = ""
 
 _key = ''
 _line = ''
@@ -30,25 +36,11 @@ if result < 0 then
 endif
 
 filename = 'config.ini'
-filesearch filename
-if result == 1 then
-  message = 'Load config.ini'
-  include 'lib\sys\log.ttl'
-  refname = 'config'
-  include 'lib\ini\load.ttl'
-  for i 0 100
-    section = 'global'
-    strlen ini_sections_config[i]
-    if result == 0 then
-      break
-    endif
-    strcompare ini_sections_config[i] section
-    if result == 0 then
-      include 'lib\ini\export-section.ttl'
-      break
-    endif
-  next
-  ifdefined config_sections_size
+refname = 'config'
+include 'lib\ini\load.ttl'
+if result == 0 then
+  messagebox message 'Configuration Error!'
+  end
 endif
 
 message = 'Load config.ini'
@@ -70,6 +62,3 @@ ifdefined config_sections_size
 
 ;regexoption 'OPTION_SINGLELINE'
 
-; initialize libraries
-include 'lib\csv\_init.ttl'
-include 'lib\ini\_init.ttl'

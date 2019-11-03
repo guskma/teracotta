@@ -1,6 +1,8 @@
 sendln ''
 sendln ''
-waitln '>' '#' '$' '%'
+wait '>' '#' '$' '%'
+sendln ''
+recvln
 
 if result > 0 then
   prompt = inputstr

@@ -9,6 +9,7 @@ filesearch _filename
 if result == 0 then
   sprintf2 message 'Not found ini file: %s' _filename
   include 'lib\sys\log.ttl'
+  result = 0
   exit
 endif
 
@@ -54,10 +55,16 @@ while 1
   strtrim _line " "
 
   strlen _line
-  if result == 0 continue
+  if result == 0 continue ; line type: blank
 
   strmatch _line "^(?:([;#]).*|(\[)([^\]]+)\]|(\S+\s*(=)\s*.+))$"
-  if result != 1 continue
+  if result == 0 then
+    sprintf2 message '(INI) could not parsed[line %d]' _i
+    include 'lib\sys\log.ttl'
+    fileclose fhandle
+    result = 0
+    exit
+  endif
 
   strlen groupmatchstr1 ; line type: comment
   _result = result
