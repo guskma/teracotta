@@ -14,15 +14,15 @@ endif
 sprintf '_s_size = ini_section_%s' refname
 execcmnd inputstr
 
-for i 0 _s_size
-  sprintf 'strcompare section ini_sections_%s[i]' refname
+for _i 0 _s_size
+  sprintf 'strcompare section ini_sections_%s[_i]' refname
   execcmnd inputstr
   if result = 0 break
 next
 
-sprintf '_s_cmnd = ini_parameters_%s_%s[i]' refname section
+sprintf '_s_cmnd = ini_parameters_%s_%s[_i]' refname section
 
-for i 0 1000
+for _i 0 1000
   execcmnd inputstr
   strlen _s_cmnd
   if result = 0 break
