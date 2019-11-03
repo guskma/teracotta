@@ -37,6 +37,9 @@ if result = 1 then
   include 'lib\sys\log.ttl'
 
   include 'lib\ini\load.ttl'
+  if result == 0 then
+    exit
+  endif
 
   sprintf '_scenario_size = ini_section_%s' refname
   execcmnd inputstr

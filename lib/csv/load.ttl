@@ -62,12 +62,19 @@ if _len > csv_max_column then
   call _error
 endif
 
-for i 0 _len
-  sprintf 'csv_headers_%s[i] = _csv_line_fields[i]' refname
+for _i 0 _len
+  strmatch _csv_line_fields[_i] '[^a-zA-Z0-9_]'
+  if result > 0 then
+    sprintf2 message 'Error: Invalid header characters: %s' _csv_line_fields[_i]
+    include 'lib\sys\log.ttl'
+    result = 0
+    call _error
+  endif
+  sprintf 'csv_headers_%s[_i] = _csv_line_fields[_i]' refname
   execcmnd inputstr
-  sprintf 'strdim csv_rows_%s_%d %d' refname i csv_max_rows
+  sprintf 'strdim csv_rows_%s_%d %d' refname _i csv_max_rows
   execcmnd inputstr
-  sprintf2 _csv_execcmnds[i] 'csv_rows_%s_%d[csv_row_%s] = _csv_line_fields[i]' refname i refname
+  sprintf2 _csv_execcmnds[_i] 'csv_rows_%s_%d[csv_row_%s] = _csv_line_fields[_i]' refname _i refname
 next
 
 ; read csv rows

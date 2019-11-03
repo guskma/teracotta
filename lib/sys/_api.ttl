@@ -39,6 +39,10 @@ return
 filesearch inputstr
 if result == 1 then
   include inputstr
+  if result == 0 then
+    sprintf2 message 'API terminate on error: %s' API
+    include 'lib\sys\log.ttl'
+  endif
   exit
 endif
 return
