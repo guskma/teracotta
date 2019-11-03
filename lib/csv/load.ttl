@@ -4,14 +4,15 @@ filename = ''
 
 ; initialization
 filesearch _filename
-if result = 0 then
+if result == 0 then
   sprintf2 message 'Not found csv file: %s' _filename
   include 'lib\sys\log.ttl'
+  result = 0
   exit
 endif
 
 strlen refname
-if result = 0 then
+if result == 0 then
   refname = 'csv'
 endif
 
@@ -27,7 +28,7 @@ endif
 ; read csv header
 sprintf 'ifdefined csv_headers_%s' refname
 execcmnd inputstr
-if result = 0 then
+if result == 0 then
   sprintf 'strdim csv_headers_%s csv_max_column+1' refname
   execcmnd inputstr
 elseif result != 6 then
@@ -38,7 +39,7 @@ elseif result != 6 then
 endif
 
 filereadln fhandle _line
-if result = 1 then
+if result == 1 then
   message = 'csv file is empty.'
   include 'lib\sys\log.ttl'
   result = 0
@@ -46,7 +47,7 @@ if result = 1 then
 endif
 
 strlen _line
-if result = 0 then
+if result == 0 then
   message = 'csv header row is undefined'
   include 'lib\sys\log.ttl'
   result = 0
@@ -81,7 +82,7 @@ _execcmnds[0] = inputstr
 
 while 1
   filereadln fhandle _line
-  if result = 1 break
+  if result == 1 break
   call _csv_readline
   execcmnd _execcmnds[0]
   for _i 0 _csv_column
