@@ -24,7 +24,7 @@ result = 0
 exit
 
 :_check_api
-if is_type = 3 then
+if is_type == 3 then
   sprintf '%s\%s\%s.ttl' _base type API
   call _include_api
   sprintf '%s\_global\%s.ttl' _base API
@@ -37,7 +37,7 @@ return
 
 :_include_api
 filesearch inputstr
-if result = 1 then
+if result == 1 then
   include inputstr
   exit
 endif
