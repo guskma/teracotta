@@ -1,6 +1,6 @@
 ; initialize tool'
 _init_ver = '4.78'
-teracotta_ver = '1.0.1'
+teracotta_ver = '0.1.3'
 api_ver = '0.1.1'
 
 ; initialize libraries
