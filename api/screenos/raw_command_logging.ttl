@@ -15,19 +15,21 @@ sendln command
 sprintf '%s.*%s' prompt_re command
 waitregex inputstr
 do
-  wait prompt '^--' #13
-  if result = 1 then
+  wait prompt #13 '^--' '--- more ---'
+  if result == 1 then
     break
-  elseif result = 2 then
+  elseif result == 2 then
+    recvln
+    filewriteln _fhandle inputstr
+  elseif result == 3 then
     message = '(ScreenOS) command error: '
     strconcat message command
     include 'lib\sys\log.ttl'
     recvln
     message = inputstr
     include 'lib\sys\log.ttl'
-  elseif result = 2 then
-    recvln
-    filewriteln _fhandle inputstr
+  elseif result == 4 then
+    send ' '
   endif
 loop while 1
 sendln ''
