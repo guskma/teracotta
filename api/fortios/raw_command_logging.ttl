@@ -1,0 +1,40 @@
+message = ''
+_filename = filename
+filename = ''
+
+strlen _filename
+if result == 0 then
+  getdate _s_value '%Y%m%d%H%M%S'
+  sprintf2 _filename 'log\command\%s_%s_%s.txt' sysname command _s_value
+endif
+
+fileopen _fhandle _filename 0
+
+sprintf2 message 'output command at %s' _filename
+include 'lib\sys\log.ttl'
+
+sendln ''
+sendln command
+sprintf '%s.*%s' prompt_re command
+waitregex inputstr
+do
+  wait prompt #13 '--More--' 'Unknown action' 'Command fail'
+  if result == 1 then
+    break
+  elseif result == 2 then
+    recvln
+    filewriteln _fhandle inputstr
+  elseif result == 3 then
+    send ' '
+  elseif result > 3 then
+    message = '(FortiOS) command error: '
+    strconcat message command
+    include 'lib\sys\log.ttl'
+    recvln
+    message = inputstr
+    include 'lib\sys\log.ttl'
+  endif
+loop while 1
+sendln ''
+
+fileclose _fhandle
