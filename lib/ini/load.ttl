@@ -16,6 +16,11 @@ endif
 strlen refname
 if result = 0 then
   refname = 'ini'
+elseif result > 20 then
+  sprintf2 message 'refname is too long: %s' refname
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
 endif
 
 ; load ini file
@@ -27,20 +32,20 @@ if fhandle < 0 then
   exit
 endif
 
-sprintf 'ifdefined ini_sections_%s 100' refname
+sprintf 'ifdefined ini_secs_%s 100' refname
 execcmnd inputstr
 if result = 0 then
-  sprintf 'strdim ini_sections_%s 100' refname
+  sprintf 'strdim ini_secs_%s 100' refname
   execcmnd inputstr
 elseif result != 6 then
-  sprintf2 message 'ini_sections_%s is not strarr: %d' refname result
+  sprintf2 message 'ini_secs_%s is not strarr: %d' refname result
   include 'lib\sys\log.ttl'
   fileclose fhandle
   result = 0
   exit
 endif
 
-sprintf 'ifdefined ini_sections_%s 100' refname
+sprintf 'ifdefined ini_secs_%s 100' refname
 execcmnd inputstr
 sprintf 'defined: %d' result
 
@@ -76,15 +81,27 @@ while 1
   if _result & $4 then ; line type: comment
     continue
   elseif _result & $2 then ; line type section
-    sprintf 'ini_sections_%s[_s_size] = groupmatchstr3' refname
+    strlen groupmatchstr3
+    _i_value = result
+    strlen refname
+    _i_value = _i_value + result
+    if _i_value > 20 then
+      _i_value = 20 - result
+      sprintf2 message '(INI) section name is too long: limit < %d' _i_value
+      include 'lib\sys\log.ttl'
+      fileclose fhandle
+      result = 0
+      exit
+    endif
+    sprintf 'ini_secs_%s[_s_size] = groupmatchstr3' refname
     execcmnd inputstr
-    sprintf 'ifdefined ini_parameters_%s_%s' refname groupmatchstr3
+    sprintf 'ifdefined ini_prms_%s_%s' refname groupmatchstr3
     execcmnd inputstr
     if result = 0 then
-      sprintf 'strdim ini_parameters_%s_%s 1000' refname groupmatchstr3
+      sprintf 'strdim ini_prms_%s_%s 1000' refname groupmatchstr3
       execcmnd inputstr
     endif
-    sprintf 'ini_section_%s = _s_size' refname
+    sprintf 'ini_sec_%s = _s_size' refname
     execcmnd inputstr
     _s_name = groupmatchstr3
     _s_size = _s_size + 1
@@ -98,7 +115,7 @@ while 1
       result = 0
       exit
     endif
-    sprintf 'ini_parameters_%s_%s[_p_size] = groupmatchstr4' refname _s_name
+    sprintf 'ini_prms_%s_%s[_p_size] = groupmatchstr4' refname _s_name
     execcmnd inputstr
     _p_size = _p_size + 1
   endif
@@ -107,7 +124,7 @@ endwhile
 ; exit loading ini
 fileclose fhandle
 if _p_size > 0 then
-  sprintf 'ini_parameters_%s_%s[_p_size] = ""' refname _s_name
+  sprintf 'ini_prms_%s_%s[_p_size] = ""' refname _s_name
   execcmnd inputstr
 endif
 

@@ -48,11 +48,11 @@ include 'lib\sys\log.ttl'
 
 for i 0 100
   section = 'global'
-  strlen ini_sections_config[i]
+  strlen ini_secs_config[i]
   if result == 0 then
     break
   endif
-  strcompare ini_sections_config[i] section
+  strcompare ini_secs_config[i] section
   if result == 0 then
     include 'lib\ini\export-section.ttl'
     break
