@@ -3,11 +3,11 @@ _filename = filename
 filename = ''
 
 foldersearch 'log'
-if result = 0 then
+if result == 0 then
   foldercreate 'log'
 endif
 foldersearch 'log\command'
-if result = 0 then
+if result == 0 then
   foldercreate 'log\command'
 endif
 
@@ -25,19 +25,21 @@ sprintf '%s.*%s' prompt_re command
 waitregex inputstr
 
 do
-  wait prompt '% ' #13
-  if result = 1 then
+  wait prompt #13'% ' #13 '--More--'
+  if result == 1 then
     break
-  elseif result = 2 then
+  elseif result == 2 then
     message = '(IOS) command error: '
     strconcat message command
     include 'lib\sys\log.ttl'
     recvln
     message = inputstr
     include 'lib\sys\log.ttl'
-  elseif result = 3 then
+  elseif result == 3 then
     recvln
     filewriteln _fhandle inputstr
+  elseif result == 4 then
+    send ' '
   endif
 loop while 1
 sendln ''
