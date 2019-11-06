@@ -14,6 +14,11 @@ endif
 strlen refname
 if result == 0 then
   refname = 'csv'
+elseif result > 20 then
+  sprintf2 message 'refname is too long: %s' refname
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
 endif
 
 ; load csv file
@@ -26,13 +31,13 @@ if fhandle < 0 then
 endif
 
 ; read csv header
-sprintf 'ifdefined csv_headers_%s' refname
+sprintf 'ifdefined csv_hdrs_%s' refname
 execcmnd inputstr
 if result == 0 then
-  sprintf 'strdim csv_headers_%s csv_max_column+1' refname
+  sprintf 'strdim csv_hdrs_%s csv_max_column+1' refname
   execcmnd inputstr
 elseif result != 6 then
-  sprintf2 message 'csv_headers_%s is not defined as a string array variable.' refname
+  sprintf2 message 'csv_hdrs_%s is not defined as a string array variable.' refname
   include 'lib\sys\log.ttl'
   result = 0
   exit
@@ -70,16 +75,16 @@ for _i 0 _len
     result = 0
     call _error
   endif
-  sprintf 'csv_headers_%s[_i] = _csv_line_fields[_i]' refname
+  sprintf 'csv_hdrs_%s[_i] = _csv_line_fields[_i]' refname
   execcmnd inputstr
-  sprintf 'strdim csv_rows_%s_%d %d' refname _i csv_max_rows
+  sprintf 'strdim csv_rs_%s_%d %d' refname _i csv_max_rows
   execcmnd inputstr
-  sprintf2 _csv_execcmnds[_i] 'csv_rows_%s_%d[csv_row_%s] = _csv_line_fields[_i]' refname _i refname
+  sprintf2 _csv_execcmnds[_i] 'csv_rs_%s_%d[csv_row_%s] = _csv_line_fields[_i]' refname _i refname
 next
 
 ; read csv rows
 _csv_column = _len
-sprintf 'csv_column_%s = _len' refname
+sprintf 'csv_col_%s = _len' refname
 execcmnd inputstr
 
 sprintf 'csv_row_%s = -1' refname

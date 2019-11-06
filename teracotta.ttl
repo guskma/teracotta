@@ -12,7 +12,7 @@ else
   filename = 'hosts.csv'
 endif
 
-refname = 'inventory'
+refname = '_tc'
 is_header = 1
 include 'lib\csv\load.ttl'
 
@@ -26,8 +26,9 @@ if result != 0 then
   scenario = param3
 endif
 
-for inventory_row 0 csv_row_inventory
+for inventory_row 0 csv_row__tc
   row = inventory_row
+  refname = '_tc'
   include 'lib\csv\export-row.ttl'
 
   sprintf2 message '* Loaded host parameters: %s *' sysname

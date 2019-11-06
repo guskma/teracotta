@@ -3,7 +3,7 @@ if result = 0 then
   refname = 'csv'
 endif
 
-sprintf '_csv_column = csv_column_%s' refname
+sprintf '_csv_column = csv_col_%s' refname
 execcmnd inputstr
 sprintf '_csv_row = csv_row_%s' refname
 execcmnd inputstr
@@ -21,10 +21,10 @@ if _csv_row < row || row < 0 then
   exit
 endif
 
-sprintf2 _execcmnds[0] '_key = csv_headers_%s[_i]' refname
+sprintf2 _execcmnds[0] '_key = csv_hdrs_%s[_i]' refname
 for _i 0 _csv_column
   execcmnd _execcmnds[0]
-  sprintf '%s = csv_rows_%s_%d[row]' _key refname _i
+  sprintf '%s = csv_rs_%s_%d[row]' _key refname _i
   execcmnd inputstr
 next
 result = 1

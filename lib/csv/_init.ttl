@@ -12,7 +12,7 @@ endif
 
 ifdefined csv_max_rows
 if result == 0 then
-  csv_max_rows = 1000
+  csv_max_rows = 999
 elseif result != 1 then
   message = 'csv_max_rows is not defined as an integer variable.'
   include 'lib\sys\log.ttl'
