@@ -2,6 +2,9 @@ message = ''
 _filename = filename
 filename = ''
 
+path = 'log\command'
+include 'lib\file\mkdir.ttl'
+
 strlen _filename
 if result == 0 then
   getdate _s_value '%Y%m%d%H%M%S'
