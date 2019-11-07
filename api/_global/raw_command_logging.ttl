@@ -13,14 +13,8 @@ message = ''
 _filename = filename
 filename = ''
 
-foldersearch 'log'
-if result = 0 then
-  foldercreate 'log'
-endif
-foldersearch 'log\command'
-if result = 0 then
-  foldercreate 'log\command'
-endif
+path = 'log\command'
+include 'lib\file\mkdir.ttl'
 
 strlen _filename
 if result == 0 then
