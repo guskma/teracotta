@@ -53,6 +53,8 @@ if result == 0 then
   result = 0
   exit
 endif
+getdir inputstr
+sprintf2 _logfilename '%s\%s' inputstr logfilename
 
 _refname = refname
 _section = section
@@ -65,15 +67,13 @@ include 'lib\ini\export-section.ttl'
 refname = _refname
 section = _section
 
-getdir inputstr
-sprintf '%s\%s' inputstr logfilename
+sprintf 'logopen _logfilename %s %s %s %s %s' is_binary is_append is_plain is_timestamp is_hide
 
 getver _s_value '4.80'
 if result >= 0 then
-  logopen inputstr is_binary is_append is_plain is_timestamp is_hide is_buffer
-else
-  logopen inputstr is_binary is_append is_plain is_timestamp is_hide
+  sprintf '%s %s' inputstr is_buffer
 endif
+execcmnd inputstr
 
 if result == 1 then
   sprintf2 message '(Log) could not open: %s' logfilename
@@ -82,18 +82,32 @@ if result == 1 then
   exit
 endif
 
-sprintf2 message '(Log) start to get log: %s' inputstr
+sprintf2 message '(Log) start to get log: %s' _logfilename
 include 'lib\sys\log.ttl'
 
 ifdefined is_logrotate
-if result == 1 && is_logrotate == 1 then
+if result == 3 then
+  message = is_logrotate
+else
+  message = 'no'
+endif
+include 'lib\str\str2bool.ttl'
+_is_logrotate = bool
+
+ifdefined logrotate_rotate
+if result == 3 then
+  str2int _logrotate_rotate logrotate_rotate
+else
+  _logrotate_rotate = 0
+endif
+
+if _is_logrotate == 1 then
   ifdefined logrotate_size
   if result == 3 then
     logrotate 'size' logrotate_size
   endif
-  ifdefined logrotate_rotate
-  if result == 1 then
-    logrotate 'rotate' logrotate_rotate
+  if _logrotate_rotate > 0 then
+    logrotate 'rotate' _logrotate_rotate
   endif
 endif
 

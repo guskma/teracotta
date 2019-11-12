@@ -62,7 +62,7 @@ while 1
   strlen _line
   if result == 0 continue ; line type: blank
 
-  strmatch _line "^(?:([;#]).*|(\[)([^\]]+)\]|(\S+\s*(=)\s*.+))$"
+  strmatch _line "^(?:([;#]).*|(\[)([^\]]+)\]|([a-zA-Z0-9_]+)\s*(=)\s*[']?(.*?)[']?)$"
   if result == 0 then
     sprintf2 message '(INI) could not parsed[line %d]' _i
     include 'lib\sys\log.ttl'
@@ -115,7 +115,8 @@ while 1
       result = 0
       exit
     endif
-    sprintf 'ini_prms_%s_%s[_p_size] = groupmatchstr4' refname _s_name
+    sprintf2 _command '%s = "%s"' groupmatchstr4 groupmatchstr6
+    sprintf 'ini_prms_%s_%s[_p_size] = _command' refname _s_name
     execcmnd inputstr
     _p_size = _p_size + 1
   endif
