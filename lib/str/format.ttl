@@ -1,0 +1,42 @@
+_message = message
+_fmt_key = ''
+_fmt_value = ''
+
+strlen _message
+do while result > 0
+  strreplace _message 1 '^[^{]*({(([a-zA-Z0-9_]+)(\[[0-9a-zA-Z_]+\])?)})?' ''
+  strlen groupmatchstr1
+  if result > 0 then
+    _fmt_key = groupmatchstr1
+    strlen groupmatchstr4
+    _result = result
+    sprintf 'ifdefined %s' groupmatchstr3
+    execcmnd inputstr
+    if result == 1 && _result == 0 then
+      sprintf 'int2str _fmt_value %s' groupmatchstr2
+      execcmnd inputstr
+    elseif result == 3 && _result == 0 then
+      sprintf '_fmt_value = %s' groupmatchstr2
+      execcmnd inputstr
+    elseif result == 5 && _result != 0 then
+      sprintf 'int2str _fmt_value %s' groupmatchstr2
+      execcmnd inputstr
+      strreplace _fmt_key 1 '\[' '\['
+      strreplace _fmt_key 1 '\]' '\]'
+    elseif result == 6 && _result != 0 then
+      sprintf '_fmt_value = %s' groupmatchstr2
+      execcmnd inputstr
+      strreplace _fmt_key 1 '\[' '\['
+      strreplace _fmt_key 1 '\]' '\]'
+    else
+      sprintf2 message '(Format)Invalid argument: %s' groupmatchstr2
+      include 'lib\sys\log.ttl'
+      result = 0
+      exit
+    endif
+    strreplace message 1 _fmt_key _fmt_value
+  endif
+  strlen _message
+loop
+
+result = 1
