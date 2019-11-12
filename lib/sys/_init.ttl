@@ -4,6 +4,8 @@ teracotta_ver = '0.1.2'
 api_ver = '0.1.1'
 
 TC_ENCODING = 'SJIS'
+TC_SYNTAX = 'SYNTAX_RUBY'
+TC_OPTION = 'OPTION_NONE'
 
 ; initialize libraries
 include 'lib\csv\_init.ttl'
@@ -62,4 +64,4 @@ for i 0 100
 next
 ifdefined config_sections_size
 
-regexoption TC_ENCODING
+regexoption TC_SYNTAX TC_ENCODING TC_OPTION
