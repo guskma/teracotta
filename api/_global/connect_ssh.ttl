@@ -3,7 +3,7 @@
 
 ; [入力値]
 ; (string)port: TCPポート番号(1-) default:22
-; (integer)ssh_ver: SSHバージョン(1|2) default:2
+; (string)ssh_ver: SSHバージョン(1|2) default:2
 ; (string)auth: 認証方法(password/publickey/challenge/pageant) default:password
 ; (string)dest: 接続先(IPまたはホスト名)
 ; (string)loginuser: ユーザ名
@@ -29,8 +29,13 @@ endif
 
 ifdefined ssh_ver
 if result = 0 then
-  ssh_ver = 2
-elseif result != 1 then
+  _ssh_ver = 2
+elseif result == 3 then
+  str2int _ssh_ver ssh_ver
+  if result == 0 || (_ssh_ver >= 1 && _ssh_ver <= 2) then
+    _ssh_ver = 2
+  endif
+else
   result = 0
   exit
 endif
@@ -49,7 +54,7 @@ if result = 0 || result != 3 then
   exit
 endif
 
-sprintf '%s:%d /ssh /%d /auth=%s' dest _port ssh_ver auth
+sprintf '%s:%d /ssh /%d /auth=%s' dest _port _ssh_ver auth
 
 ifdefined loginuser
 if result = 3 then
