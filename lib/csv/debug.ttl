@@ -3,16 +3,16 @@ if result = 0 then
   refname = 'csv'
 endif
 
-sprintf '_csv_column = csv_column_%s' refname
+sprintf '_csv_col = csv_col_%s' refname
 execcmnd inputstr
 
 sprintf '_csv_row = csv_row_%s' refname
 execcmnd inputstr
 
-sprintf2 message 'ref: %s, column: %d, row: %d' refname _csv_column _csv_row
+sprintf2 message 'ref: %s, column: %d, row: %d' refname _csv_col _csv_row
 include 'lib\sys\log.ttl'
 
-if _csv_column = 0 then
+if _csv_col = 0 then
   sprintf2 message 'csv file is not load'
   include 'lib\sys\log.ttl'
   result = 0
@@ -21,9 +21,9 @@ endif
 
 message = '|'
 _separator = '|'
-sprintf2 _execcmnds[0] '_key = csv_headers_%s[i]' refname
+sprintf2 _execcmnds[0] '_key = csv_hdrs_%s[_i]' refname
 
-for _i 0 _csv_column
+for _i 0 _csv_col
   strconcat _separator '----|'
   execcmnd _execcmnds[0]
   sprintf2 message '%s %s |' message _key
@@ -35,8 +35,8 @@ include 'lib\sys\log.ttl'
 if _csv_row >= 0 then
   for _i 0 _csv_row
     message = '|'
-    for _j 0 _csv_column
-      sprintf '_s_value = csv_rows_%s_%d[_i]' refname _j
+    for _j 0 _csv_col
+      sprintf '_s_value = csv_rs_%s_%d[_i]' refname _j
       execcmnd inputstr
       sprintf2 message '%s %s |' message _s_value
     next
