@@ -8,7 +8,7 @@ do
   if result == 1 then
     break
   elseif result > 1 then
-    message = '(IOS) command error: '
+    message = '(FortiOS) command error: '
     strconcat message command
     include 'lib\sys\log.ttl'
     recvln
