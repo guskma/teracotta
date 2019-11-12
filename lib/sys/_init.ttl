@@ -3,6 +3,8 @@ _init_ver = '4.78'
 teracotta_ver = '0.1.2'
 api_ver = '0.1.1'
 
+TC_ENCODING = 'SJIS'
+
 ; initialize libraries
 include 'lib\csv\_init.ttl'
 include 'lib\ini\_init.ttl'
@@ -60,5 +62,4 @@ for i 0 100
 next
 ifdefined config_sections_size
 
-;regexoption 'OPTION_SINGLELINE'
-
+regexoption TC_ENCODING
