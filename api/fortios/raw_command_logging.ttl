@@ -21,7 +21,7 @@ sendln command
 sprintf '%s.*%s' prompt_re command
 waitregex inputstr
 do
-  wait prompt #13 '--More--' 'Unknown action' 'Command fail'
+  wait prompt #10 '--More--' 'Unknown action' 'Command fail'
   if result == 1 then
     break
   elseif result == 2 then
