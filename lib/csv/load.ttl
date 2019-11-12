@@ -1,7 +1,7 @@
 ; load csv library
 _filename = filename
 filename = ''
-sprintf2 _re_field '^,?\s*(?:%s|%s|([^,]*))\s*' '"([^"]*)"' "'([^']*)'"
+sprintf2 _re_field '^,?\s*(?:%s|%s|([^,]*))?\s*' '"([^"]*)"' "'([^']*)'"
 
 ; initialization
 filesearch _filename
@@ -113,17 +113,18 @@ for _i 0 csv_max_column
   _s_value = ''
 
   strreplace _line 1 _re_field ''
-  strlen groupmatchstr1
-  if result > 0 _s_value = groupmatchstr1
+  if result > 0 then
+    strlen groupmatchstr1
+    if result > 0 _s_value = groupmatchstr1
 
-  strlen groupmatchstr2
-  if result > 0 _s_value = groupmatchstr2
+    strlen groupmatchstr2
+    if result > 0 _s_value = groupmatchstr2
 
-  strlen groupmatchstr3
-  if result > 0 _s_value = groupmatchstr3
-
+    strlen groupmatchstr3
+    if result > 0 _s_value = groupmatchstr3
+  endif
   strlen _s_value
-  if result == 0 && _len == 0 _len = _i
+  if result == 0 && _len == 0 _len = _i - 1
   _csv_line_fields[_i] = _s_value
 next
 return
