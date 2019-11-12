@@ -1,0 +1,27 @@
+; logopen.ttl
+; 文字列で表現されたTrue/FolseなどのBoolean値を整数型の0または1に変換します。
+
+; [入力値]
+; (string)message: 判定する文字列
+
+; [戻り値]
+; (integer)bool: 判定結果(true,ok,onなどで1, false,ng,offなどで0, その他の場合-1)
+; (integer)result: 正しく変換できたら1、そうでない場合は0
+
+regexoption TC_SYNTAX TC_ENCODING 'OPTION_IGNORECASE'
+strmatch message '^(?:(t(?:rue)?|ok|on|yes)|(f(?:alse)?|ng|off|no))$'
+regexoption TC_SYNTAX TC_ENCODING TC_OPTION
+
+strlen groupmatchstr1
+_result = result
+strlen groupmatchstr2
+if _result > 0 && result == 0 then
+  bool = 1
+  result = 1
+elseif _result == 0 && result > 0 then
+  bool = 0
+  result = 1
+else
+  bool = -1
+  result = 0
+endif
