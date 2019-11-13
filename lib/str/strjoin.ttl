@@ -1,0 +1,54 @@
+; strjoin.ttl
+; strjoinはマクロ関数として実装されていますが、配列として扱う際に不便なので用意しました。
+
+; [入力値]
+; (string)inputstr_arr: 結合する文字列配列
+; (string)delimiter: 区切り文字(デフォルトは',')
+; (integer)length: 結合する長さ(1000まで。未指定もしくは0以下の場合は空要素まで)
+
+; [戻り値]
+; (integer)result: 結合に成功したら1、失敗したら０
+; (string array) inputstr: 結合した文字列
+
+ifdefined inputstr_arr
+if result == 0 then
+  result = 0
+  exit
+endif
+
+ifdefined delimiter
+if result == 0 then
+  delimiter = ','
+elseif result != 3 then
+  result = 0
+  exit
+endif
+
+ifdefined length
+if result == 0 then
+  _length = 0
+elseif result != 1 then
+  result = 0
+  exit
+elseif length > 1000 then
+  _length = 1000
+else
+  _length = length
+endif
+messagebox _length length
+
+_i = 1
+inputstr = inputstr_arr[0]
+do
+  if _length <= 0 then
+    strlen inputstr_arr[_i]
+    if result == 0 then
+      break
+    endif
+  elseif _length <= _i then
+    break
+  endif
+  strconcat inputstr delimiter
+  strconcat inputstr inputstr_arr[_i]
+  _i = _i + 1
+loop
