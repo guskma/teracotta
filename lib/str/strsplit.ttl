@@ -1,0 +1,44 @@
+; strsplit.ttl
+; strsplitはマクロ関数として実装されていますが、配列として扱う際に不便なので用意しました。
+
+; [入力値]
+; (string)message: 分割する文字列
+; (string)delimiter: 区切り文字(デフォルトは',')
+
+; [戻り値]
+; (integer)result: 分割した要素数(エラーで0)
+; (string array) inputstr_arr: 分割した値(最大1000)
+
+ifdefined inputstr_arr
+if result == 0 then
+  strdim inputstr_arr 1000
+elseif result != 6 then
+  result = 0
+  exit
+endif
+
+ifdefined delimiter
+if result == 0 then
+  delimiter = ','
+elseif result != 3 then
+  result = 0
+  exit
+endif
+
+strlen delimiter
+if result == 0 then
+  delimiter = ','
+endif
+
+groupmatchstr2 = message
+for _i 1 1000
+  strsplit groupmatchstr2 delimiter 2
+  inputstr_arr[_i - 1] = groupmatchstr1
+  inputstr_arr[_i] = groupmatchstr2
+  strscan groupmatchstr2 delimiter
+  if result == 0 then
+    break
+  endif
+next
+
+result = _i + 1
