@@ -1,27 +1,47 @@
-; logopen.ttl
-; 文字列で表現されたTrue/FolseなどのBoolean値を整数型の0または1に変換します。
+; str2bool.ttl
+; 指定された変数を調査し、Boolean値として整数型の0または1に変換します。
 
 ; [入力値]
-; (string)message: 判定する文字列
+; (string)variable: 判定する変数(整数型、文字列型に対応)
 
 ; [戻り値]
-; (integer)bool: 判定結果(true,ok,onなどで1, false,ng,offなどで0, その他の場合-1)
-; (integer)result: 正しく変換できたら1、そうでない場合は0
+; (integer)result: 判定結果(以下のパターンが該当します)
 
+; 文字列型の場合：true,ok,on,yes,正の整数で1, false,ng,off,no,0以下の整数で0, それ以外で-1
+; 整数型の場合：正の整数で1, 0以下の整数で0
+; 変数未定義の場合：-1
+
+sprintf 'ifdefined %s' variable
+execcmnd inputstr
+
+if result == 0 then
+  result = -1
+  exit
+elseif result == 1 then
+  sprintf 'result = %s > 0' variable
+  execcmnd inputstr
+  exit
+endif
+
+_re = '^(?:(t(?:rue)?|ok|on|yes)|(f(?:alse)?|ng|off|no)|(-?[0-9]+))$'
 regexoption TC_SYNTAX TC_ENCODING 'OPTION_IGNORECASE'
-strmatch message '^(?:(t(?:rue)?|ok|on|yes)|(f(?:alse)?|ng|off|no))$'
+sprintf 'strmatch %s _re' variable
+execcmnd inputstr
 regexoption TC_SYNTAX TC_ENCODING TC_OPTION
 
-strlen groupmatchstr1
-_result = result
-strlen groupmatchstr2
-if _result > 0 && result == 0 then
-  bool = 1
-  result = 1
-elseif _result == 0 && result > 0 then
-  bool = 0
-  result = 1
+strlen groupmatchstr1 ; positive expression (0b0100)
+_result = (result > 0)
+strlen groupmatchstr2 ; negative expression (0b0010)
+_result = (_result << 1) + (result > 0)
+strlen groupmatchstr3 ; integer expression (0b0001)
+_result = (_result << 1) + (result > 0)
+
+
+if _result & $6 then ; positive/negative expression
+  result = _result & $4 > 0
+elseif _result & $1 then ; integer expression
+  str2int result groupmatchstr3
+  result = result > 0
 else
-  bool = -1
-  result = 0
+  result = -1
 endif
