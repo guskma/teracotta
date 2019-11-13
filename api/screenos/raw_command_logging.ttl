@@ -18,7 +18,7 @@ sendln command
 sprintf '%s.*%s' prompt_re command
 waitregex inputstr
 do
-  wait prompt #10 '^--' '--- more ---'
+  wait prompt #13 '^--' '--- more ---'
   if result == 1 then
     break
   elseif result == 2 then
