@@ -4,31 +4,31 @@
 ; config.ini の [log] セクションのパラメータを調整してください。
 
 ; [Config値]
-; (integer)is_binary: バイナリ出力
+; (string)is_binary: バイナリ出力
 ;   0: しない(漢字、改行コードなどは変換される)
 ;   1: する(漢字、改行コードなどはそのまま書き込まれる)
-; (integer)is_append: 追記モード
+; (string)is_append: 追記モード
 ;   0: 無効(ログ取得時、既存のテキストを消去する)
 ;   1: 有効(ログ取得時、既存のテキストに追記する)
-; (integer)is_plain: プレーン出力
+; (string)is_plain: プレーン出力
 ;   0: 無効(NULLなどASCII非表示文字を出力する)
 ;   1: 有効(ASCII非表示文字を出力しない)
-; (integer)is_timestamp: タイムスタンプ出力
+; (string)is_timestamp: タイムスタンプ出力
 ;   0: 無効(行頭にタイムスタンプを出力しない)
 ;   1: 有効(行頭にタイムスタンプを出力する)
-; (integer)is_hide: ログ転送ダイアログの非表示
+; (string)is_hide: ログ転送ダイアログの非表示
 ;   0: 表示
 ;   1: 非表示
-; (integer)is_buffer: スクリーンバッファを先に書き込む
+; (string)is_buffer: スクリーンバッファを先に書き込む
 ;   0: 無効
 ;   1: 有効
 ;   ※teraterm v4.80 以降でのみ有効になります。
-; (integer)is_logrotate: ログローテート設定の有効化
+; (string)is_logrotate: ログローテート設定の有効化
 ;   0: 無効
 ;   1: 有効
 ; (string)logrotate_size: ローテートサイズ(128-)
 ;   例: 1048576, 1024K, 1M
-; (integer)logrotate_count: ローテート世代数(3-)
+; (string)logrotate_count: ローテート世代数(3-)
 ;   指定した世代数だけファイルを保持し、古いファイルは順番に削除されます。
 
 ; [入力値]
@@ -67,13 +67,26 @@ include 'lib\ini\export-section.ttl'
 refname = _refname
 section = _section
 
-sprintf 'logopen _logfilename %s %s %s %s %s' is_binary is_append is_plain is_timestamp is_hide
+_command = 'logopen _logfilename'
+message = 'is_binary,is_append,is_plain,is_timestamp,is_hide'
+delimiter = ','
+include 'lib\str\strsplit.ttl'
+_last = result - 1
+for i 0 _last
+  variable = inputstr_arr[i]
+  include 'lib\str\str2bool.ttl'
+  result = result > 0
+  sprintf2 _command '%s %d' _command result
+next
 
 getver _s_value '4.80'
 if result >= 0 then
-  sprintf '%s %s' inputstr is_buffer
+  variable = 'is_buffer'
+  include 'lib\str\str2bool.ttl'
+  if result < 0 result = 0
+  sprintf2 _command '%s %d' _command result
 endif
-execcmnd inputstr
+execcmnd _command
 
 if result == 1 then
   sprintf2 message '(Log) could not open: %s' logfilename
@@ -85,29 +98,19 @@ endif
 sprintf2 message '(Log) start to get log: %s' _logfilename
 include 'lib\sys\log.ttl'
 
-ifdefined is_logrotate
-if result == 3 then
-  message = is_logrotate
-else
-  message = 'no'
-endif
+variable = 'is_logrotate'
 include 'lib\str\str2bool.ttl'
-_is_logrotate = bool
 
-ifdefined logrotate_rotate
-if result == 3 then
-  str2int _logrotate_rotate logrotate_rotate
-else
-  _logrotate_rotate = 0
-endif
-
-if _is_logrotate == 1 then
+if result > 0 then
   ifdefined logrotate_size
   if result == 3 then
     logrotate 'size' logrotate_size
   endif
-  if _logrotate_rotate > 0 then
-    logrotate 'rotate' _logrotate_rotate
+  variable = 'logrotate_rotate'
+  include 'lib\str\str2bool.ttl'
+  result = result > 0
+  if result == 1 then
+    logrotate 'rotate' result
   endif
 endif
 
