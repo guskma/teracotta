@@ -1,0 +1,51 @@
+; goto.ttl
+; 直前の実行結果を評価して特定のラベルへジャンプします。
+
+; [入力値]
+; (string)on_success: 成功時ジャンプ先セクション
+; (string)on_error: 失敗時ジャンプ先セクション
+; (string)on_exception: 例外時ジャンプ先ラベル
+; このAPIは、直前の実行結果( `result` の値)を評価します。
+; result結果は、1以上: 成功、0:失敗、-1以下: 例外(致命的エラー)として分類されています。
+; 各ジャンプ先セクションを指定しなかった場合は、評価が該当してもジャンプせずに次へ進みます。
+
+; [戻り値]
+; (integer)result: 評価結果(1でジャンプ成功、0でジャンプ指定なし、-1でジャンプ失敗)
+; 成功時の具体的な数値については console-*.ttl を参照してください。
+
+_on = ''
+if api_result == 0
+  strlen on_error
+  if api_result == 0 exit
+  _on = on_error
+elseif result > 1 then
+  strlen on_success
+  if api_result == 0 exit
+  _on = on_success
+else
+  strlen on_exception
+  if api_result == 0 then exit
+  endif
+  _on = on_exception
+endif
+
+sprintf2 _command '_s_value = ini_secs_%s[_i]' refname
+for _i 0 _scenario_size
+  api_continue = 1
+  execcmnd _command
+  strcompare _s_value _on
+  if result == 0 then
+    _scenario_i = _i - 1
+    break
+  endif
+next
+
+if _i != _scenario_i + 1 then
+  result = -1
+else
+  result = 1
+endif
+
+on_success = ''
+on_error = ''
+on_exception = ''

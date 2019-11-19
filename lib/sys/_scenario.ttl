@@ -15,7 +15,7 @@ if result == 0 then
 endif
 
 ifdefined type
-if result = 3 then
+if result == 3 then
   sprintf 'scenario\%s\%s.ini' type scenario
   call _include_scenario
 endif
@@ -31,7 +31,7 @@ exit
 :_include_scenario
 filename = inputstr
 filesearch filename
-if result = 1 then
+if result == 1 then
   visibility = debug
   sprintf2 message '===== Load scenario: %s =====' scenario
   include 'lib\sys\log.ttl'
@@ -52,12 +52,13 @@ if result = 1 then
     include 'lib\ini\export-section.ttl'
 
     include 'lib\sys\_api.ttl'
-    if result = 0 then
+    api_result = result
+    if result == 0 then
       sprintf2 message '(Scenario) API terminate on error: %s' API
       include 'lib\sys\log.ttl'
     endif
 
-    if api_continue = 0 then
+    if api_continue == 0 then
       break
     endif
   next
