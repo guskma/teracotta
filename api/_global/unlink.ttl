@@ -1,0 +1,4 @@
+; unlink.ttl
+; 現在のTeratermウインドウとTeracotta間のリンクを絶ちます
+
+unlink
