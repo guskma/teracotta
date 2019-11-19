@@ -1,0 +1,13 @@
+; disconnect.ttl
+; 通信を切断します。
+; Teratermとマクロ間のリンクは切れないため、再接続時にTeratermウインドウが新しく立ち上がることはありません。
+; 新しくウインドウを立ち上げたい場合は`unlink`を利用してください。
+
+; [入力値]
+; (string)dialog: ダイアログ表示(default:on)
+; 未設定、未定義等の場合はデフォルト値が入ります
+
+variable = 'dialog'
+include 'lib\str\str2bool.ttl'
+
+disconnect (result > 0)

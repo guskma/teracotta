@@ -1,4 +1,6 @@
 ; unlink.ttl
 ; 現在のTeratermウインドウとTeracotta間のリンクを絶ちます
+; 再接続した際に新たにTeratermウインドウを開きます。
+; 同じウインドウを再利用したい場合はdisconnectを利用してください。
 
 unlink

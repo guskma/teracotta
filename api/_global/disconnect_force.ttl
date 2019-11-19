@@ -1,4 +1,0 @@
-; disconnect_force.ttl
-; 確認ダイアログを表示せずに切断します。
-
-disconnect 0
