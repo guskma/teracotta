@@ -13,6 +13,13 @@
 ; [戻り値]
 ; (integer)result: 接続成否(0で接続失敗)
 
+testlink
+if result == 2 then
+  result = 0
+  message = '(Connect) connection is established yet'
+  exit
+endif
+
 ifdefined port
 if result = 0 then
   _port = 22

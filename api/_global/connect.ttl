@@ -5,6 +5,9 @@
 ; [入力値]
 ; (string)protocol: 接続種別(console/telnet/ssh)
 ; その他接続種別に依存した入力値は console-*.ttl を参照してください。
+; (string)group: マルチキャストグループ
+; 複数端末にマルチキャストメッセージを送信するための設定ですが、
+; teratermマクロからの制御はかなり限られてしまうため、現状では設定のみです。
 
 ; [戻り値]
 ; (integer)result: 試行結果(0で失敗、1以上で成功)
@@ -15,6 +18,7 @@ if result == 0 then
   protocol = 'console'
 elseif result != 3 then
   result = 0
+  message = '(Connect) Invalid variable type.'
   exit
 endif
 
@@ -28,6 +32,15 @@ sprintf 'api\_global\connect_%s.ttl' protocol
 include inputstr
 if result = 0 then
   exit
+endif
+
+ifdefined group
+if result == 3 then
+  strlen group
+  if result > 0 then
+    setmulticastname group
+  endif
+  group = ''
 endif
 
 timeout = 0
