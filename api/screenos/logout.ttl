@@ -1,2 +1,3 @@
 sendln 'exit'
-disconnect 0
+
+include 'lib\term\disconnect.ttl'

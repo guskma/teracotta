@@ -1,0 +1,6 @@
+disconnect 0
+
+do
+  mpause 10
+  testlink
+loop while result == 2
