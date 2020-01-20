@@ -1,8 +1,8 @@
 wait 'login:' 'Password:'
-if result = 1 then
+if result == 1 then
   sendln loginuser
   wait 'Password:'
-elseif result = 0 then
+elseif result == 0 then
   message = '(FortiOS) login failed: It may not be the login phase'
   include 'lib\sys\log.ttl'
   result = 0
@@ -12,7 +12,7 @@ endif
 sendln password
 
 wait ' # '
-if result = 0 then
+if result == 0 then
   messagebox '(FortiOS) login failed: invalid password'
   include 'lib\sys\log.ttl'
   result = 0
