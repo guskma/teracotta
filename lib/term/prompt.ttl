@@ -13,4 +13,3 @@ else
   message = '(Prompt) could not catch any prompt.'
   include 'lib\sys\log.ttl'
 endif
-

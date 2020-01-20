@@ -1,7 +1,7 @@
 sendln 'enable'
 
 wait 'Password:' '#'
-if result = 1 then
+if result == 1 then
   sendln become
 endif
 
