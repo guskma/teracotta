@@ -34,6 +34,8 @@ if result = 0 then
   exit
 endif
 
+_result = result
+
 ifdefined group
 if result == 3 then
   strlen group
@@ -45,4 +47,5 @@ endif
 
 timeout = 0
 mtimeout = 0
+result = _result
 setsync 1
