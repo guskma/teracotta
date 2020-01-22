@@ -11,3 +11,10 @@ variable = 'dialog'
 include 'lib\str\str2bool.ttl'
 
 disconnect (result > 0)
+
+do
+  testlink
+  mpause 10
+loop until result == 0
+
+result = 1
