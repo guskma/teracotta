@@ -1,0 +1,30 @@
+wait 'login:' 'Password:'
+if result == 1 then
+  sendln loginuser
+  wait 'Password:'
+elseif result == 0 then
+  message = '(JUNOS) login failed: It may not be the login phase'
+  include 'lib\sys\log.ttl'
+  result = 0
+  exit
+endif
+
+sendln password
+
+wait '>' '%' 'login:' 'Password:'
+if result == 1 then
+  include 'lib\sys\log.ttl'
+  include 'lib\term\prompt.ttl'
+  result = 1
+  sendln ''
+elseif result == 2 then
+  include 'lib\sys\log.ttl'
+  include 'lib\term\prompt.ttl'
+  result = 2
+  sendln ''
+else
+  message = '(JUNOS) login failed: invalid password'
+  include 'lib\sys\log.ttl'
+  include 'lib\term\disconnect.ttl'
+  result = 0
+endif

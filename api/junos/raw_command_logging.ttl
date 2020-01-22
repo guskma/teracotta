@@ -1,0 +1,43 @@
+message = ''
+_filename = filename
+filename = ''
+
+path = 'log\command'
+include = 'lib\file\mkdir.ttl'
+
+strlen _filename
+if result == 0 then
+  getdate _s_value '%Y%m%d%H%M%S'
+  sprintf2 _filename 'log\command\%s_%s_%s.txt' sysname command _s_value
+endif
+
+fileopen _fhandle _filename 0
+
+sendln ''
+sendln command
+message = command
+include 'lib\str\convert_regex.ttl'
+sprintf "%s.*%s" prompt_re message
+waitregex inputstr
+
+do
+  wait prompt #10'unknown command.' #13 '---(more)---'
+  if result == 1 then
+    break
+  elseif result == 2 then
+    message = '(JUNOS) command error: '
+    strconcat message command
+    include 'lib\sys\log.ttl'
+    recvln
+    message = inputstr
+    include 'lib\sys\log.ttl'
+  elseif result == 3 then
+    recvln
+    filewriteln _fhandle inputstr
+  elseif result == 4 then
+    send ' '
+  endif
+loop while 1
+sendln ''
+
+fileclose _fhandle
