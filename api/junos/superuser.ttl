@@ -1,0 +1,11 @@
+sendln 'cli'
+
+wait '>' '%'
+if result != 1 then
+  message = "(JUNOS) failed to become operational mode."
+  result = 0
+  exit
+endif
+
+include 'lib\term\prompt.ttl'
+result = 1

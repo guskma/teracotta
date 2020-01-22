@@ -1,0 +1,12 @@
+command = 'configure'
+sendln ''
+sendln command
+sprintf '%s.*%s' prompt_re command
+waitregex inputstr
+prompt = '[edit'
+prompt_re = '\[edit'
+do
+  wait prompt
+  if result == 1 break
+loop while 1
+sendln ''

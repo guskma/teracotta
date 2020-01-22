@@ -1,0 +1,14 @@
+command = 'exit configuration-mode'
+sendln ''
+sendln command
+
+sprintf '%s.*%s' prompt_re command
+waitregex inputstr 'Exit with uncommitted changes'
+if result == 2 then
+  message = '(JUNOS) WARN: exit without uncommitted changes'
+  include 'lib\sys\log.ttl'
+  sendln 'yes'
+endif
+
+include 'lib\term\prompt.ttl'
+result = 1
