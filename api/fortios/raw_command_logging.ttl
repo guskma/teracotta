@@ -18,7 +18,9 @@ include 'lib\sys\log.ttl'
 
 sendln ''
 sendln command
-sprintf '%s.*%s' prompt_re command
+message = command
+include 'lib\str\convert_regex.ttl'
+sprintf "%s.*%s" prompt_re message
 waitregex inputstr
 do
   wait prompt #13 '--More--' 'Unknown action' 'Command fail'
